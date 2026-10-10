@@ -140,20 +140,30 @@ def stage_checks(files):
 
 def print_generate_commands(files, series, episode):
     """打印 Pod 侧已验证的生成命令序列（不做实现——避免重造坏轮子）。"""
-    print("\n  📋 送发生成（在 Pod 内，已验证的序列）：")
-    print("     1) scp scripts/ 与素材到 Pod")
-    print("     2) python scripts/extract_shots.py <视频提示词.md>   # -> shots.json")
-    print("     3) 逐镜：")
-    print("        python scripts/make_payload.py --shots _validate/batch/shots.json \\")
-    print("               --workflow-dir _validate/batch --shot M01 --out /tmp/wf_M01.json")
-    print("        python3 comfy_ui2api.py /tmp/wf_M01.json -o /tmp/api_M01.json")
-    print("        python3 comfy_patch.py /tmp/api_M01.json /tmp/payload_M01.json")
-    print("        curl -b ck.txt -X POST -H 'Content-Type: application/json' \\")
-    print("             --data-binary @/tmp/payload_M01.json http://127.0.0.1:8188/prompt")
-    print("     4) 队列空后拉回：")
-    print(f"        python scripts/collect_shots.py --host <ip> --port <port> "
-          f"--out _validate/shots_real")
-    print("\n  ⚠️ 详见 docs/调研/H3-RunPod-实操手册.md（8 个坑）")
+    ep = episode
+    print("\n  📋 送发生成（**已验证序列**，2026-10-10）：")
+    print("     0) 开机自检（登录 / 拉 oi.json / 盘点资产 / 确认 turbo 开关）")
+    print("        export COMFYUI_PASSWORD=<密码>")
+    print("        scp scripts/pod_boot_check.sh root@<ip>:/workspace/ -P <port>")
+    print("        ssh -p <port> root@<ip> 'cd /workspace && bash pod_boot_check.sh'")
+    print()
+    print("     1) 抽清单（**由提示词单一真相生成**，别手工维护）")
+    print(f"        python scripts/make_shots_json.py docs/方案/{series}/09-{ep}视频提示词.md \\")
+    print("               -o _validate/batch/shots.json")
+    print()
+    print("     2) 批量生成（脚本内置 turbo 开关 + 逐镜轮询；NO_TURBO=1 可关掉对比）")
+    print("        scp scripts/{make_payload,comfy_ui2api,comfy_patch}.py \\")
+    print("            scripts/pod_batch_generate.sh root@<ip>:/workspace/ -P <port>")
+    print("        ssh -p <port> root@<ip> 'cd /workspace && bash pod_batch_generate.sh shots.json'")
+    print()
+    print("     3) 拉回（本机）")
+    print("        python scripts/collect_shots.py --host <ip> --port <port> "
+          "--out _validate/shots_real")
+    print()
+    print("  ★ turbo（节点 146）不开 = 20 步 = 白等 3.7 倍。批处理已自动开。")
+    print("  ★ 环境镜只挂场景锚（单参考，快 4 倍）；出脸镜才用双参考。")
+    print("  ⚠️ 详见 docs/调研/H3-RunPod-实操手册.md（8 个坑）"
+          " 与 docs/调研/H3能力地图-2026-10-10.md")
 
 
 def main():
