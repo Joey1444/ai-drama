@@ -1,9 +1,9 @@
 {
- "_generated_by": "scripts/make_edit.py  <- docs/方案/符/08-E1分镜.md（**别手改，改分镜**）",
+ "_generated_by": "scripts/make_edit.py  <- F:\\4vibe coding学习\\ai-drama\\docs\\方案\\符\\08-E1分镜.md（**别手改，改分镜**）",
  "xfade": 0,
  "_xfade_note": "0 = 全片硬切（专业默认，diegetic 标点是例外）。只在场景边界给一次 dip。",
- "trim_head": 0.4,
- "trim_tail": 0.4,
+ "trim_head": 0.2,
+ "trim_tail": 0.2,
  "_trim_note": "每镜掐头去尾。风险镜已列出，若成片动作被切掉，可对单镜调小。",
  "min_shot": 1.0,
  "risky_shots": [
@@ -23,7 +23,7 @@
  },
  "_audio_shift_note": "由分镜里的「画外音」标注推导（注意：只有『画外：/画外音/画外贴…』才算，『视线停在画外』不算）：该镜声音提前 0.5s = J-cut。",
  "silence_before": {
-  "at": 49.22,
+  "at": 53.85,
   "duration": 0.35
  },
  "subtitle": {
@@ -53,11 +53,11 @@
   "ranges": [
    [
     0.0,
-    3.66
+    5.6
    ],
    [
-    43.79,
-    49.57
+    49.6,
+    54.2
    ]
   ],
   "freq": 48,
