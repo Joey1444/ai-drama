@@ -139,15 +139,23 @@ def main():
             print(f"❌ build.py 失败: {err}")
             sys.exit(code)
 
-        # 复制成片到指定输出路径
+        # 成片落位。build.py 固定写到 _validate/out/final.mp4；
+        # **若目标就是同一个文件，不再复制**——早期版本无条件 copy2，
+        # 结果每跑一次就多一份一模一样的成片（用户实测发现过）。
         final_mp4 = ROOT / "_validate" / "out" / "final.mp4"
-        if final_mp4.exists():
+        if not final_mp4.exists():
+            print(f"❌ 成片未生成: {final_mp4}")
+            sys.exit(1)
+        try:
+            same = final_mp4.resolve() == Path(output).resolve()
+        except Exception:
+            same = False
+        if same:
+            print(f"  ✅ 成片: {final_mp4}（目标同路径，未复制）")
+        else:
             import shutil
             shutil.copy2(final_mp4, output)
             print(f"  ✅ 成片已输出: {output}")
-        else:
-            print(f"❌ 成片未生成: {final_mp4}")
-            sys.exit(1)
 
     print(f"\n{'='*60}")
     print("✅ 全流程完成！")
