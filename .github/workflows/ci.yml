@@ -1,0 +1,10 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    uses: Joey1444/repo-ci/.github/workflows/check.yml@main
