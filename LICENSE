@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Note on third-party components:
-- MiniMax H3 model weights and its hosted API are governed by the MiniMax H3
-  Community License (commercial use permitted with prominent model attribution;
-  excluded regions apply).
-- Bundled/vendored skills (e.g. short-drama-* suites) retain their own licenses.

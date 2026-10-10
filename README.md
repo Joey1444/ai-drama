@@ -97,5 +97,6 @@ python scripts/run_pipeline.py --series <系列> --episode <EP>
 
 ## 许可
 
-[MIT](LICENSE)。第三方组件（如 MiniMax H3 权重、各技能）遵循各自许可；
+[MIT](LICENSE)。第三方组件（MiniMax H3 权重与 API、各技能套件）遵循各自许可——
+详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 使用 MiniMax H3 须遵守其 Community License（商用需显著标注模型名）。
