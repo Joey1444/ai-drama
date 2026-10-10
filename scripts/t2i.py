@@ -48,11 +48,47 @@ def get_key() -> str:
     sys.exit("❌ 找不到 OpenRouter key（放 ~/.claude/token.txt 的 OpenRouter= 行，或设 OPENROUTER_API_KEY）")
 
 
+def model_price(p: dict):
+    """取该模型出图的**真实单价**（美元/次或/单位）。
+
+    ⚠️ 2026-10-10 踩过：只看 `prompt`/`completion`/`image` 会得到 0，
+    误判成"免费"——**真实计费在 `image_output` / `image_token`**。
+    例：seedream-5-0-flash 的 prompt/completion/image 都是 0，
+    但 image_token = 0.0000043（收费）；只有**全部字段为 0** 才是真免费。
+    """
+    if not p:
+        return None, False
+    vals = []
+    for v in p.values():
+        try:
+            vals.append(float(v))
+        except (TypeError, ValueError):
+            pass
+    if not vals:
+        return None, False
+    free = all(v == 0 for v in vals)
+    # 出图相关字段优先，没有则取所有非零里的最小
+    keyed = [float(p[k]) for k in ("image_output", "image_token", "image") if k in p and _isnum(p[k])]
+    price = min([v for v in keyed if v > 0], default=None)
+    if price is None:
+        nz = [v for v in vals if v > 0]
+        price = min(nz) if nz else 0.0
+    return price, free
+
+
+def _isnum(v):
+    try:
+        float(v)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
 def list_image_models(key: str) -> list:
     """列可用图片模型。
 
     ⚠️ 必须带 `?output_modalities=image`——不带过滤时只返回「输出含文本」的模型（12 个），
-    会漏掉绝大多数纯出图模型（实测带过滤是 61 个）。
+    会漏掉绝大多数纯出图模型（实测带过滤 61 个）。
     """
     url = MODELS_API + "?output_modalities=image"
     req = urllib.request.Request(url, headers={"Authorization": "Bearer " + key})
@@ -62,17 +98,8 @@ def list_image_models(key: str) -> list:
         arch = m.get("architecture") or {}
         if "image" not in str(arch.get("output_modalities", [])):
             continue
-        p = m.get("pricing") or {}
-
-        def num(v):
-            try:
-                return float(v)
-            except (TypeError, ValueError):
-                return None
-
-        cand = [x for x in (num(p.get("image")), num(p.get("prompt")), num(p.get("completion"))) if x is not None]
-        price = min(cand) if cand else None
-        out.append({"id": m.get("id"), "free": (price == 0), "price": price})
+        price, free = model_price(m.get("pricing") or {})
+        out.append({"id": m.get("id"), "free": free, "price": price})
     return out
 
 
