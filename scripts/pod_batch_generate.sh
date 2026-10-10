@@ -34,14 +34,32 @@ for ID in $IDS; do
   python3 comfy_ui2api.py "/tmp/wf_$ID.json" -o "/tmp/api_$ID.json" >/dev/null || { echo "$ID 转换失败，跳过"; continue; }
   python3 comfy_patch.py "/tmp/api_$ID.json" "/tmp/payload_$ID.json" >/dev/null || { echo "$ID patch 失败，跳过"; continue; }
 
+  # ★ turbo 开关：r2v 工作流的节点 146 = True → 走 ref2v_turbo_4step LoRA + 4 步。
+  #   不开就是裸模型 + 20 步，实测慢 3.7 倍（2026-10-10 实测：13min vs 3.5min）。
+  #   想关掉对比画质：NO_TURBO=1 bash pod_batch_generate.sh ...
+  if [ "${NO_TURBO:-0}" != "1" ]; then
+    python3 -c "
+import json
+p = '/tmp/payload_$ID.json'
+d = json.load(open(p))
+n = d.get('prompt', {})
+if '146' in n:                      # r2v：turbo 总开关
+    n['146']['inputs']['value'] = True
+    json.dump(d, open(p, 'w'))
+    print('  turbo ON → 4 步')
+else:                               # t2v 路径没有 146（它的 LoRA 挂在 LoraManager 上）
+    print('  该工作流无 146 节点（t2v），走默认步数')
+" || echo "  ⚠️ turbo 开关设置失败，按默认跑"
+  fi
+
   PID=$(curl -s -b "$CK" -X POST -H "Content-Type: application/json" \
         --data-binary @"/tmp/payload_$ID.json" http://127.0.0.1:8188/prompt \
         | python3 -c "import sys,json;print(json.load(sys.stdin).get('prompt_id',''))")
   [ -z "$PID" ] && { echo "$ID 提交失败，跳过"; continue; }
   echo "$ID 已提交 prompt_id=$PID"
 
-  # 等完成（最多 25 分钟）
-  for _ in $(seq 1 100); do
+  # 等完成（turbo 下约 3–5 分钟/镜；给 15 分钟上限，防卡死空等）
+  for _ in $(seq 1 60); do
     sleep 15
     curl -s -b "$CK" "http://127.0.0.1:8188/history/$PID" | grep -q "$PID" && { echo "$ID ✅ 完成"; break; }
   done
