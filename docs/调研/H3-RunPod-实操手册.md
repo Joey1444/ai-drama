@@ -338,3 +338,29 @@ python scripts/make_payload.py --shot M02 --out _validate/batch/wf_M02.json
 curl -s -X POST -H "Authorization: Bearer $KEY" https://rest.runpod.io/v1/pods/<podId>/stop
 ```
 实测：返回体里 `desiredStatus: "EXITED"` 即成功；**110GB 卷保留**，重开机不用重下模型。
+
+### 删除（terminate）—— **与停机完全不同，别搞混**
+
+停机保卷；**删除会连卷一起清掉**，重开必须重下 ~70GB 模型（15–25 分钟）。
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" -X DELETE \
+  -H "Authorization: Bearer $KEY" https://rest.runpod.io/v1/pods/<podId>    # 204 = 成功
+```
+
+⚠️ **两件必须知道的事**：
+
+1. **SSH 公钥只在创建 Pod 时注入** → 重开要**新建** Pod 并重新注入，不能"重启旧的"
+2. 重建照本手册「部署」走：模板 `a1nkufhzxq` + **`allowedCudaVersions:["13.0"]`**（否则 CUDA 起不来）
+
+**删完自查**（费用归零 = 两项都为 0）：
+
+```bash
+curl -s "https://api.runpod.io/graphql?api_key=$KEY" -H "Content-Type: application/json" \
+  -d '{"query":"{ myself { pods { id } networkVolumes { id } } }"}'
+```
+
+> **实测记录（2026-10-10）**：删前先核对本地产物齐全 —— `_validate/out/final.mp4`（36M）、
+> `_validate/shots_v3/` 与 `shots_real/`（各 13 镜）、`docs/生成留证/符/EP001/`（5 文件）。
+> 确认都在本地后才 terminate；删后 pods 与 networkVolumes 均为 0。
+
