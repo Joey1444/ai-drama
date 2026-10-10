@@ -47,3 +47,6 @@ _validate/tts.wav
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 验证工作区
+_validate/val/
