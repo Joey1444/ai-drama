@@ -1,0 +1,11 @@
+[
+ {
+  "id": "ALLEY_ANCHOR",
+  "order": 1,
+  "title": "老巷场景锚",
+  "seconds": 5,
+  "mode": "t2va",
+  "reference": null,
+  "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, an empty narrow alley at night between old brick walls, wet asphalt, shallow puddles catching dim light, a faint spill of cold light from the alley mouth far away. No people appear. The camera holds a static shot throughout. Cold cyan-grey grade, low saturation, crushed shadows, the walls reading as dark desaturated red-grey brick. Fine film grain, slight vignette. No captions, subtitles, or any on-screen text are generated at any point.\n\noverall_soundscape: A low-frequency rumble runs underneath, water drips somewhere down the alley, faint damp air moves.\n\nnon_diegetic_music: N/A"
+ }
+]

@@ -1,0 +1,16 @@
+[
+ {
+  "id": "M02",
+  "order": 2,
+  "title": "掌心摊开·双参考测试",
+  "seconds": 5,
+  "mode": "ref2va",
+  "reference": {
+   "path": "chenmo_anchor.png"
+  },
+  "reference2": {
+   "path": "alley_anchor.png"
+  },
+  "prompt": "subject_definitions:\n<Subject 1> is the 24-year-old Chinese man in <Picture 1>, with a short crew cut of black hair, a high brow ridge, single eyelids, and a black delivery windbreaker over a dark inner layer. <Picture 1> supplies his identity only.\n<Picture 2> is the empty night alley that supplies the location, its brick walls, wet asphalt and cold light only; it supplies no person.\n\nsummary:\n[reference generation] The target video shows <Subject 1> standing in the dark alley of <Picture 2> at night, holding a blood-stained calligraphy brush in his open palm, looking down at it, and then looking up to ask where it came from.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - face shape, facial proportions, the short black crew-cut silhouette, apparent age, and the black delivery windbreaker are retained; his pose, framing, expression and lighting are set by this shot, not by <Picture 1>.\nThe alley of <Picture 2>: preserved - the brick wall tone, wet asphalt and the cold spill from the alley mouth are kept as the location; no person from <Picture 2> is carried over.\n\ndetailed_description:\nThe target video is live-action and cinematic, graded cold cyan-grey with deep crushed shadows, lit only by a single dim light source at the far end of the alley.\n[Shot 1] A medium close-up frames <Subject 1> from the chest up, standing in the narrow alley of <Picture 2> at night. He holds his right palm open in front of his chest, and a worn wolf-hair calligraphy brush lies across it: a dark brown glossy handle with one shallow crack running along it, and a stiff dark tip. Wet blood is smeared along the handle. He lowers his eyes to the palm and studies the brush for a beat, his chest still. He then raises his gaze, his eyes widening and his mouth opening. <Subject 1> (S1), on-screen, speaks in a clear young male voice: <d>[Chinese] ……这哪来的？</d> He finishes the line and holds. His face remains fully in frame at the end of the shot. His left arm stays down at his side, his shoulders barely move, and the alley behind him stays soft and dark. The camera holds a static shot throughout. No second person appears. No captions, subtitles, or any on-screen text are generated at any point.\n\noverall_soundscape: Low alley ambience continues throughout, with one distant water drip and a faint low-frequency bed beneath the spoken line.\n\nnon_diegetic_music: N/A"
+ }
+]

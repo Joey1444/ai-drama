@@ -54,6 +54,7 @@ def main():
     shot_id = arg("--shot")
     out = arg("--out")
     ref_image = arg("--ref-image")
+    ref_image2 = arg("--ref-image2")
     if not shot_id or not out:
         print(__doc__)
         return 2
@@ -95,21 +96,22 @@ def main():
         v.append(0)
     v[0], v[1] = ASPECT, MEGAPIXELS
 
-    # 参考式：挂参考图
+    # 参考式：挂参考图（两个槽位 = 身份 + 场景/第二身份）
     if n_ref is not None:
-        img = ref_image or (s["reference"] or {}).get("path")
-        if not img:
+        img1 = ref_image or (s["reference"] or {}).get("path")
+        if not img1:
             sys.exit("%s 是参考式，但 shots.json 里没有参考图路径，也没给 --ref-image" % shot_id)
-        name = os.path.basename(img)
-        # 官方 r2v 模板挂了两个参考图槽位，我们每镜只有一张 → 第二个槽位复用同一张。
-        # （不这么做的后果：139 仍指向模板自带的 mecha_dragon_lightning.png，而 Pod 的 input/ 里没有它 → 必失败）
-        for nid in (n_ref, n_ref2):
+        # 第二参考：显式给了就用（`--ref-image2` 或 shots.json 的 reference2）；
+        # 没给则复用第一张——**保持旧行为**：139 仍指向模板自带的 mecha_dragon_lightning.png
+        # 而 Pod 的 input/ 里没有它，必失败。
+        img2 = ref_image2 or (s.get("reference2") or {}).get("path") or img1
+        for nid, path in ((n_ref, img1), (n_ref2, img2)):
             if nid is None:
                 continue
             v = wv(nid)
             while len(v) < 2:
                 v.append("")
-            v[0] = name
+            v[0] = os.path.basename(path)
 
     json.dump(d, open(out, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
@@ -118,7 +120,10 @@ def main():
     print("  尺寸 %s @ %.2fMP -> 节点 %s" % (ASPECT, MEGAPIXELS, n_res))
     print("  提示词 %d 字 -> 节点 %s（前 70 字：%s…）" % (len(s["prompt"]), n_prompt, s["prompt"][:70]))
     if n_ref is not None:
-        print("  参考图 %s -> 节点 %s" % (os.path.basename(ref_image or s["reference"]["path"]), n_ref))
+        img1 = ref_image or s["reference"]["path"]
+        img2 = ref_image2 or (s.get("reference2") or {}).get("path") or img1
+        print("  参考图1 %s -> 节点 %s" % (os.path.basename(img1), n_ref))
+        print("  参考图2 %s -> 节点 %s" % (os.path.basename(img2), n_ref2))
     print("  -> %s" % out)
     return 0
 
