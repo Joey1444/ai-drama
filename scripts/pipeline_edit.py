@@ -32,13 +32,13 @@ sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def run_cmd(cmd, cwd=None, check=True, capture=True):
+def run_cmd(cmd, cwd=None, check=True, capture=True, env=None):
     """运行命令，返回 (code, stdout, stderr)"""
     try:
         result = subprocess.run(
             cmd, cwd=cwd or ROOT,
             capture_output=capture, text=True, encoding="utf-8",
-            timeout=1800, check=check
+            timeout=1800, check=check, env=env
         )
         return result.returncode, result.stdout, result.stderr
     except subprocess.CalledProcessError as e:
@@ -134,7 +134,10 @@ def main():
             sys.executable, str(ROOT / "_validate" / "build.py"),
             str(edit_json)
         ]
-        code, out, err = run_cmd(cmd, cwd=ROOT / "_validate")
+        # build.py 默认从 _validate/shots/ 读素材；把本次的素材目录传给它
+        # （2026-10-10 修：此前两边对不上，build 直接 sys.exit）
+        env = dict(os.environ, SHOTS_DIR=str(shots_dir))
+        code, out, err = run_cmd(cmd, cwd=ROOT / "_validate", env=env)
         if code != 0:
             print(f"❌ build.py 失败: {err}")
             sys.exit(code)

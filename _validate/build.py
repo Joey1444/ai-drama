@@ -25,6 +25,7 @@ v2 -> v3 改了什么（依据：Walter Murch 剪辑六规则 / StudioBinder 转
 Windows 上 stdout 默认 GBK，中文会乱码，故显式强制 UTF-8。
 """
 import json
+import os
 import re
 import subprocess
 import sys
@@ -98,9 +99,15 @@ def main() -> None:
     lowfreq = cfg.get("lowfreq") or {}
     silence = cfg.get("silence_before") or None
 
-    shots = sorted((ROOT / "shots").glob("*.mp4"))
+    # 素材目录：默认 shots/，可用环境变量 SHOTS_DIR 覆盖
+    # （2026-10-10 修：此前写死 shots/，而 pipeline_edit 把素材放在别处 → 两边对不上、跑不通）
+    shots_dir = Path(os.environ.get("SHOTS_DIR") or (ROOT / "shots"))
+    if not shots_dir.is_absolute():
+        shots_dir = ROOT / shots_dir
+    shots = sorted(shots_dir.glob("*.mp4"))
     if not shots:
-        sys.exit("没有找到 shots/*.mp4")
+        sys.exit(f"没有找到素材：{shots_dir}/*.mp4")
+    print(f"素材目录：{shots_dir}（{len(shots)} 个）")
     infos = [probe(s) for s in shots]
     raw = [duration(s) for s in shots]
     n = len(shots)
