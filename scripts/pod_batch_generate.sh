@@ -52,6 +52,19 @@ else:                               # t2v 路径没有 146（它的 LoRA 挂在 
 " || echo "  ⚠️ turbo 开关设置失败，按默认跑"
   fi
 
+  # ★ 随机化种子：否则同一 payload 会被 ComfyUI 判为重复、直接返回缓存、**不重新生成**
+  #   （2026-10-10 踩过：连提交 3 次只产出 1 个文件，等于只抽了 1 张）
+  python3 -c "
+import json, random
+p = '/tmp/payload_$ID.json'
+d = json.load(open(p))
+for nid, n in d.get('prompt', {}).items():
+    ins = n.get('inputs') or {}
+    if 'noise_seed' in ins:
+        ins['noise_seed'] = random.randint(0, 2**63 - 1)
+json.dump(d, open(p, 'w'))
+" || echo "  ⚠️ 种子随机化失败"
+
   PID=$(curl -s -b "$CK" -X POST -H "Content-Type: application/json" \
         --data-binary @"/tmp/payload_$ID.json" http://127.0.0.1:8188/prompt \
         | python3 -c "import sys,json;print(json.load(sys.stdin).get('prompt_id',''))")
