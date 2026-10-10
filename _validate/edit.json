@@ -1,0 +1,67 @@
+{
+ "_generated_by": "scripts/make_edit.py  <- docs/方案/符/08-E1分镜.md（**别手改，改分镜**）",
+ "xfade": 0,
+ "_xfade_note": "0 = 全片硬切（专业默认，diegetic 标点是例外）。只在场景边界给一次 dip。",
+ "trim_head": 0.4,
+ "trim_tail": 0.4,
+ "_trim_note": "每镜掐头去尾。风险镜已列出，若成片动作被切掉，可对单镜调小。",
+ "min_shot": 1.0,
+ "risky_shots": [
+  "M05",
+  "M10",
+  "M12"
+ ],
+ "transitions": {
+  "6": [
+   "dip",
+   0.12
+  ]
+ },
+ "_transitions_note": "由分镜的「## 场景N」分节自动推导：只在场景边界给 dip。",
+ "audio_shift": {
+  "11": -0.5
+ },
+ "_audio_shift_note": "由分镜里的「画外音」标注推导（注意：只有『画外：/画外音/画外贴…』才算，『视线停在画外』不算）：该镜声音提前 0.5s = J-cut。",
+ "silence_before": {
+  "at": 49.22,
+  "duration": 0.35
+ },
+ "subtitle": {
+  "font": "Microsoft YaHei",
+  "size": 68,
+  "margin_v": 240,
+  "outline": 3,
+  "_note": "size / margin_v 是**真实像素**（build.py 会传 original_size=1080x1920，不传的话 ASS 按默认 384x288 算，字会巨大且位置飘到画面中部）。⚠️ **margin_v 不要超过 260**——实测 300 时 libass 会整条字幕都不画（静默失败）。⚠️ 也不要加 Alignment，实测会一起坏掉。"
+ },
+ "grade": {
+  "lut3d": "",
+  "contrast": 1.08,
+  "saturation": 0.92,
+  "shadows_blue": 0.06,
+  "highlights_red": 0.04,
+  "vibrance": 0.08,
+  "unsharp": "5:5:0.6"
+ },
+ "exposure": {
+  "target": 46,
+  "_note": "逐镜把平均亮度拉向 target，**只压不提**（本剧是压暗风格）。keep = 故意暗、不动的镜（首尾威胁镜）。为什么需要：T2VA 每镜曝光是模型自己掷的，实测同场景能差 2 倍（35→72）。",
+  "keep": [
+   "M13"
+  ]
+ },
+ "lowfreq": {
+  "ranges": [
+   [
+    0.0,
+    3.66
+   ],
+   [
+    43.79,
+    49.57
+   ]
+  ],
+  "freq": 48,
+  "gain": 0.055
+ },
+ "_lowfreq_note": "由分镜「声音」列里的「低频/轰鸣」自动推导。"
+}

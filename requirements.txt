@@ -1,0 +1,27 @@
+# ============================================================
+# AI 短剧制作框架 · Python 依赖
+# Python >= 3.10
+# 安装：pip install -r requirements.txt
+# ============================================================
+
+# ---- 核心（脚本运行必需）----
+PyYAML==6.0.3
+numpy==1.26.4
+
+# ---- 外部命令依赖（非 pip，需系统安装，脚本会检测并提示）----
+#   ffmpeg / ffprobe   —— 剪辑、字幕烧录、时长探测
+#     Windows:  winget install Gyan.FFmpeg
+#     macOS:    brew install ffmpeg
+#     Linux:    apt install ffmpeg
+#     ⚠️ 字幕烧录用 .ass 文件把 PlayResX/Y 写死，不依赖 ffmpeg 的 --enable-frei0r
+#   ssh / scp          —— RunPod 拉取素材
+
+# ============================================================
+# 可选依赖（按需安装；缺失时对应功能会"降级并告警"，不静默失败）
+# ============================================================
+# ---- 图像质量检测（check_gate_G25 / check_drift）----
+opencv-python==4.10.0.84
+
+# ---- 对白 ASR 校验（verify_asr）----
+faster-whisper==1.0.3
+zhconv==1.4.3

@@ -1,0 +1,49 @@
+# ===== 密钥 / 凭据（绝不进 git）=====
+token.txt
+.env
+.env.*
+*.key
+*.pem
+.pod_pw
+.pod_id
+.ssh_target
+.runpod_target
+ck.txt
+**/ck.txt
+
+# ===== 生成的大体积媒体（复现成本高，不进仓库）=====
+_validate/shots/
+_validate/shots_real/
+_validate/shots_test/
+_validate/out/
+_validate/batch/
+_validate/anchor/
+_validate/frames/
+_validate/subs/
+*.mp4
+*.mov
+*.m4a
+*.wav
+*.mp3
+!docs/**/示例/*.mp4
+输入/参考图/*
+!输入/参考图/.gitkeep
+
+# ===== 运行状态 / 缓存 =====
+_validate/pipeline_state.json
+.gate_*
+**/.gate_*
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+out/graph.txt
+_validate/grid*.png
+_validate/tts.wav
+
+# ===== 编辑器 / 系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

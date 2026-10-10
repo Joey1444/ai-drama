@@ -1,0 +1,31 @@
+# 统一换行符：仓库内文本一律 LF（避免 Windows CRLF 污染 diff）
+* text=auto eol=lf
+
+# 二进制文件不参与换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp4 binary
+*.mov binary
+*.m4a binary
+*.wav binary
+*.mp3 binary
+*.gif binary
+
+# 脚本显式声明
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.txt text eol=lf
+
+# Windows 批处理保留 CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 语言统计：文档不计入代码占比
+docs/** linguist-documentation
+*.md linguist-documentation
