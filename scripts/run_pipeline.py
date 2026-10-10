@@ -44,6 +44,41 @@ class Stage:
         self.key, self.name, self.free, self.fn = key, name, free, fn
 
 
+def check_deps():
+    """启动依赖自检：区分「必需」与「可选-降级」，给出明确安装指引。
+    不阻断流程（可选缺失只降级），但让人一眼知道缺什么。"""
+    import importlib.util
+    required = [("yaml", "PyYAML"), ("numpy", "numpy")]
+    optional = [("cv2", "opencv-python", "关键帧画质检测 / 跨镜漂移检测"),
+                ("faster_whisper", "faster-whisper", "对白 ASR 校验"),
+                ("zhconv", "zhconv", "中文繁简归一（ASR 比对用）")]
+    import shutil as _sh
+    missing_req, missing_opt, missing_bin = [], [], []
+    for mod, pkg in required:
+        if importlib.util.find_spec(mod) is None:
+            missing_req.append(pkg)
+    for mod, pkg, use in optional:
+        if importlib.util.find_spec(mod) is None:
+            missing_opt.append((pkg, use))
+    for b in ("ffmpeg", "ffprobe"):
+        if _sh.which(b) is None:
+            missing_bin.append(b)
+
+    if missing_req or missing_bin:
+        print("❌ 缺少必需依赖：")
+        for p in missing_req:
+            print(f"   - Python 包 {p}")
+        for b in missing_bin:
+            print(f"   - 外部命令 {b}（Windows: winget install Gyan.FFmpeg）")
+        print("   安装：pip install -r requirements.txt\n")
+        sys.exit(2)
+    if missing_opt:
+        print("ℹ️ 可选依赖缺失（对应功能会降级并告警，不影响主流程）：")
+        for pkg, use in missing_opt:
+            print(f"   - {pkg}（{use}）")
+        print("   装齐：pip install -r requirements.txt\n")
+
+
 def run_py(script, args, timeout=600):
     cmd = [sys.executable, str(ROOT / script)] + [str(a) for a in args]
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
@@ -130,6 +165,8 @@ def main():
                     choices=["check", "generate", "collect", "edit", "gate_G4", "finalize"])
     ap.add_argument("--yes", action="store_true", help="预先确认为生成花钱（跳过交互）")
     args = ap.parse_args()
+
+    check_deps()
 
     files = discover(args.series, args.episode)
     print("=" * 62)
